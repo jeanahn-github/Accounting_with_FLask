@@ -6,6 +6,7 @@ from flask_ckeditor import CKEditorField
 
 # WTForms
 
+# 마스터데이터 입력 form
 class CreateAccountForm(FlaskForm):
     account_code = IntegerField("계정코드", validators=[DataRequired()])
     account_name = StringField("계정과목명", validators=[DataRequired()])
@@ -15,7 +16,19 @@ class CreateAccountForm(FlaskForm):
     account_description = TextAreaField("계정설명")
     submit = SubmitField("저장")
 
+class CreatePartnerForm(FlaskForm):
+    partner_name = StringField("거래처명", validators = [DataRequired()])
+    partner_type = SelectField("거래처 유형", choices = [('S', '매출거래처'), ('P', '매입거래처'), ('E', '기타거래처')], validators = [DataRequired()])
+    partner_description = TextAreaField("거래처 설명")
+    submit = SubmitField("저장")
 
+class CreateProjectForm(FlaskForm):
+    project_name = StringField("프로젝트명", validators = [DataRequired()])
+    project_description = TextAreaField("프로젝트 설명")
+    submit = SubmitField("저장")
+
+
+# 전표입력 form
 class CreateTransactionForm(FlaskForm):
 
     date = DateField("전표일자", validators = [DataRequired()])
@@ -26,6 +39,11 @@ class CreateTransactionForm(FlaskForm):
     project = SelectField("프로젝트", choices = [])
     description = TextAreaField("적요")
     submit = SubmitField("저장")
+
+
+
+
+
 
 
 

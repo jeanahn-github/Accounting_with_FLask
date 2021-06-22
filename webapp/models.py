@@ -35,9 +35,9 @@ class Transaction(db.Model):
     account_code = db.Column(db.Integer, db.ForeignKey('chart_of_account.account_code'), nullable=False)
     account = db.relationship('ChartOfAccount', backref = db.backref('transaction_set'))
     transaction_amount = db.Column(db.Integer, nullable=False)
-    partner_code = db.Column(db.String(10), db.ForeignKey('partner.partner_code'), nullable=True)
-    partner = db.relationship('Partner', backref = db.backref('transaction_set'))
-    project_code = db.Column(db.String(10), db.ForeignKey('project.project_code'), nullable=True)
+    partner_code = db.Column(db.Integer, db.ForeignKey('partner.id'), nullable=False)
+    partner = db.relationship('Partner', backref=db.backref('transaction_set'))
+    project_code = db.Column(db.Integer, db.ForeignKey('project.id'), nullable = False)
     project = db.relationship('Project', backref = db.backref('transaction_set'))
     transaction_description = db.Column(db.Text, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -48,7 +48,7 @@ class Partner(db.Model):
 
     __tablename__ = "partner"
 
-    partner_code = db.Column(db.String(10), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     partner_name = db.Column(db.String(100), nullable=False)
     partner_type = db.Column(db.String(1), nullable=False)
     partner_description = db.Column(db.Text, nullable = True)
@@ -57,7 +57,7 @@ class Partner(db.Model):
 class Project(db.Model):
     __tablename__ = "project"
 
-    project_code = db.Column(db.String(10), primary_key = True)
+    id = db.Column(db.Integer, primary_key=True)
     project_name = db.Column(db.String(100), nullable = False)
     project_description = db.Column(db.Text, nullable = True)
 

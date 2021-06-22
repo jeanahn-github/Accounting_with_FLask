@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for
 
-from ..forms import CreateAccountForm
+from ..forms import CreateAccountForm, CreatePartnerForm, CreateProjectForm
 from ..models import ChartOfAccount, Partner, Project
 
 from webapp import db
@@ -11,7 +11,7 @@ bp = Blueprint("master", __name__, url_prefix = '/')
 # 마스터데이터 조회/생성/변경
 
 # 계정과목 생성
-@bp.route("/coa/create", methods = ["GET", "POST"])
+@bp.route("/master/coa/create", methods = ["GET", "POST"])
 def create_account():
     available_account_group = ChartOfAccount.query.filter(ChartOfAccount.is_sum_account == "sum")
     account_group_list = [(i.account_name, i.account_name) for i in available_account_group]
@@ -35,7 +35,7 @@ def create_account():
     return render_template("master/account_master.html", form = form)
 
 # 계정과목 수정
-@bp.route("/coa/edit/<int:account_code>", methods = ["GET", "POST"])
+@bp.route("/master/coa/edit/<int:account_code>", methods = ["GET", "POST"])
 def edit_account(account_code):
     account = ChartOfAccount.query.get(account_code)
     edit_form = CreateAccountForm(
@@ -61,5 +61,38 @@ def edit_account(account_code):
     return render_template("master/account_master.html", form = edit_form, is_edit = True, account = account)
 
 
+# 거래처 생성
+@bp.route("/master/partner/create", methods = ["GET", "POST"])
+def create_partner():
 
+    form = CreatePartnerForm()
 
+    if form.validate_on_submit():
+        new_partner = Partner(
+            partner_name = form.partner_name.data,
+            partner_type = form.partner_type.data,
+            partner_description = form.partner_description.data
+        )
+        db.session.add(new_partner)
+        db.session.commit()
+        return redirect(url_for("main.home"))
+
+    return render_template("master/partner_master.html", form = form)
+
+# 프로젝트 생성
+@bp.route("/master/project/create", methods = ["GET", "POST"])
+def create_project():
+
+    form = CreateProjectForm()
+
+    if form.validate_on_submit():
+        new_project = Project(
+            project_name = form.project_name.data,
+            project_type = form.project_type.data,
+            project_description = form.project_description.data
+        )
+        db.session.add(new_project)
+        db.session.commit()
+        return redirect(url_for("main.home"))
+
+    return render_template("master/project_master.html", form = form)

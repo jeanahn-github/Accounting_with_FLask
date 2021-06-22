@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: a561309f6e8d
+Revision ID: e8e1fc49b796
 Revises: 
-Create Date: 2021-06-19 16:02:06.562350
+Create Date: 2021-06-22 21:32:41.127240
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a561309f6e8d'
+revision = 'e8e1fc49b796'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,7 +21,7 @@ def upgrade():
     op.create_table('chart_of_account',
     sa.Column('account_code', sa.Integer(), nullable=False),
     sa.Column('account_type', sa.String(length=1), nullable=False),
-    sa.Column('is_sum_account', sa.Boolean(), nullable=False),
+    sa.Column('is_sum_account', sa.String(length=10), nullable=False),
     sa.Column('account_group', sa.String(length=50), nullable=True),
     sa.Column('account_name', sa.String(length=100), nullable=False),
     sa.Column('account_description', sa.Text(), nullable=True),
@@ -29,16 +29,17 @@ def upgrade():
     sa.UniqueConstraint('account_name', name=op.f('uq_chart_of_account_account_name'))
     )
     op.create_table('partner',
-    sa.Column('partner_code', sa.String(length=10), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('partner_name', sa.String(length=100), nullable=False),
+    sa.Column('partner_type', sa.String(length=1), nullable=False),
     sa.Column('partner_description', sa.Text(), nullable=True),
-    sa.PrimaryKeyConstraint('partner_code', name=op.f('pk_partner'))
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_partner'))
     )
     op.create_table('project',
-    sa.Column('project_code', sa.String(length=10), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('project_name', sa.String(length=100), nullable=False),
     sa.Column('project_description', sa.Text(), nullable=True),
-    sa.PrimaryKeyConstraint('project_code', name=op.f('pk_project'))
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_project'))
     )
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -53,16 +54,17 @@ def upgrade():
     op.create_table('transaction',
     sa.Column('document_number', sa.String(length=20), nullable=False),
     sa.Column('document_date', sa.String(length=10), nullable=False),
+    sa.Column('document_type', sa.String(length=1), nullable=False),
     sa.Column('account_code', sa.Integer(), nullable=False),
     sa.Column('transaction_amount', sa.Integer(), nullable=False),
-    sa.Column('partner_code', sa.String(length=10), nullable=True),
-    sa.Column('project_code', sa.String(length=10), nullable=True),
+    sa.Column('partner_code', sa.Integer(), nullable=False),
+    sa.Column('project_code', sa.Integer(), nullable=False),
     sa.Column('transaction_description', sa.Text(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['account_code'], ['chart_of_account.account_code'], ),
-    sa.ForeignKeyConstraint(['partner_code'], ['partner.partner_code'], ),
-    sa.ForeignKeyConstraint(['project_code'], ['project.project_code'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.ForeignKeyConstraint(['account_code'], ['chart_of_account.account_code'], name=op.f('fk_transaction_account_code_chart_of_account')),
+    sa.ForeignKeyConstraint(['partner_code'], ['partner.id'], name=op.f('fk_transaction_partner_code_partner')),
+    sa.ForeignKeyConstraint(['project_code'], ['project.id'], name=op.f('fk_transaction_project_code_project')),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], name=op.f('fk_transaction_user_id_user')),
     sa.PrimaryKeyConstraint('document_number', name=op.f('pk_transaction'))
     )
     # ### end Alembic commands ###
